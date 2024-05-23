@@ -12,6 +12,7 @@ pynvim = "*"
 black = "*"
 pytensor = "*"
 pymc = "*"
+seaborn = "*"
 
 [dev-packages]
 
