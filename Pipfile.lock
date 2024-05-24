@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "34ddb08a005f55f24a273d9e97a710cde17ff8f6fe22e75aa4eb98eed644a72a"
+            "sha256": "5793ea70925e8b5f8cfc9f9c6aa3a74aa85f2742efb20ddd2a034f6363f4e86d"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -599,6 +599,15 @@
             ],
             "version": "==1.5.1"
         },
+        "graphviz": {
+            "hashes": [
+                "sha256:09d6bc81e6a9fa392e7ba52135a9d49f1ed62526f96499325930e87ca1b5925d",
+                "sha256:81f848f2904515d8cd359cc611faba817598d2feaac4027b266aa3eda7b3dde5"
+            ],
+            "index": "pypi",
+            "markers": "python_version >= '3.8'",
+            "version": "==0.20.3"
+        },
         "greenlet": {
             "hashes": [
                 "sha256:01bc7ea167cf943b4c802068e178bbf70ae2e8c080467070d01bfa02f337ee67",
@@ -822,11 +831,11 @@
         },
         "jupyter-client": {
             "hashes": [
-                "sha256:3b7bd22f058434e3b9a7ea4b1500ed47de2713872288c0d511d19926f99b459f",
-                "sha256:e842515e2bab8e19186d89fdfea7abd15e39dd581f94e399f00e2af5a1652d3f"
+                "sha256:2bda14d55ee5ba58552a8c53ae43d215ad9868853489213f37da060ced54d8df",
+                "sha256:50cbc5c66fd1b8f65ecb66bc490ab73217993632809b6e505687de18e9dea39f"
             ],
             "markers": "python_version >= '3.8'",
-            "version": "==8.6.1"
+            "version": "==8.6.2"
         },
         "jupyter-console": {
             "hashes": [
@@ -878,11 +887,11 @@
         },
         "jupyterlab": {
             "hashes": [
-                "sha256:0dfe9278e25a145362289c555d9beb505697d269c10e99909766af7c440ad3cc",
-                "sha256:356e9205a6a2ab689c47c8fe4919dba6c076e376d03f26baadc05748c2435dd5"
+                "sha256:6ac6e3827b3c890e6e549800e8a4f4aaea6a69321e2240007902aa7a0c56a8e4",
+                "sha256:a10fb71085a6900820c62d43324005046402ffc8f0fde696103e37238a839507"
             ],
             "markers": "python_version >= '3.8'",
-            "version": "==4.2.0"
+            "version": "==4.2.1"
         },
         "jupyterlab-pygments": {
             "hashes": [

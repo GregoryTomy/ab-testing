@@ -13,6 +13,7 @@ black = "*"
 pytensor = "*"
 pymc = "*"
 seaborn = "*"
+graphviz = "*"
 
 [dev-packages]
 
