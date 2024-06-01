@@ -1,0 +1,110 @@
+---
+title: "EDA"
+format: gfm
+jupyter: python3
+---
+
+```{python}
+
+import pandas as pd
+import seaborn as sns
+
+pd.options.display.float_format = "{:.2f}".format
+```
+
+```{python}
+data_raw = pd.read_csv("data/cookie_cats.txt")
+data = data_raw.melt(
+    id_vars=["userid", "version", "sum_gamerounds"],
+    value_vars=["retention_1", "retention_7"],
+    var_name="retention_type",
+    value_name="retained",
+)
+
+print(data.info())
+```
+
+
+# Exploratory analysis
+
+```{python}
+game_rounds_plot = (
+    sns.boxplot(
+        data=data,
+        x="version",
+        y="sum_gamerounds",
+        log_scale=True,
+    )
+    .set_title("[Log-scale] Gamerounds with Extreme Outliers")
+    .figure.savefig("images/gamerounds_outliers.png", bbox_inches="tight")
+)
+
+game_rounds_plot
+
+```
+# sum game rounds has some extreme outliers
+
+```{python}
+
+data_gate_30 = data[data.version == "gate_30"]
+data_gate_40 = data[data.version == "gate_40"]
+
+print("Game rounds Gate 1:")
+print(data_gate_30["sum_gamerounds"].describe())
+print("--------------------------------------------------------")
+print("Game rounds Gate 7:")
+print(data_gate_40["sum_gamerounds"].describe())
+
+```
+
+```{python}
+
+print("Gate 30 users with game rounds above the 99th ")
+quantile_99 = data_gate_30["sum_gamerounds"].quantile(0.99)
+print((data_gate_30[data_gate_30["sum_gamerounds"] > quantile_99].shape[0]))
+
+print("--------------------------------------------------------")
+print("Gate 40 users with game rounds above the 99th ")
+quantile_99 = data_gate_40["sum_gamerounds"].quantile(0.99)
+print((data_gate_40[data_gate_40["sum_gamerounds"] > quantile_99].shape[0]))
+```
+
+```{python}
+
+# we remove game rounds above the 99th percentile
+quantile_99 = data["sum_gamerounds"].quantile(0.99)
+data_no_outliers = data[data["sum_gamerounds"] <= quantile_99]
+
+# %%
+
+game_rounds_plot = (
+    sns.boxplot(
+        data=data_no_outliers,
+        x="version",
+        y="sum_gamerounds",
+        log_scale=True,
+    )
+    .set_title("[Log-scale] Gamerounds with Extreme Outliers REMOVED")
+    .figure.savefig("images/gamerounds_no_outliers.png", bbox_inches="tight")
+)
+
+game_rounds_plot
+```
+
+```{python}
+print(data_no_outliers["sum_gamerounds"].describe())
+```
+
+I still think the outliers can be justified to some degree. Whilst a majority of
+players play less than 50 rounds in 14 days (about 4 games a day), players can certainly
+play more than 4 rounds a day.
+
+On the extreme end 50k rounds in 14 days (~3600 / day) seems excessive, but by that
+intuition, is 3k rounds in 14 days (~214/day) unusual?
+
+## Questions to ask stakeholders: Are the numbers at the extreme usual?
+
+```{python}
+data_no_outliers.to_csv("data/data_no_outliers.csv", index=False)
+
+```

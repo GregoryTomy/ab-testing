@@ -20,6 +20,7 @@ torchaudio = "*"
 pyro-ppl = "*"
 polars = "*"
 numpyro = "*"
+altair = {extras = ["all"], version = "*"}
 
 [dev-packages]
 

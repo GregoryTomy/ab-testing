@@ -1,0 +1,130 @@
+---
+title: "Gamerounds Analysis"
+format: gfm
+jupyter: python3
+---
+
+```{python}
+import pandas as pd
+import pymc as pm
+import arviz as az
+import matplotlib.pyplot as plt
+import preliz as pz
+
+plt.style.use('bmh')
+```
+
+
+```{python}
+df = pd.read_csv("data/cookie_cats.txt")
+df_no_outliers = pd.read_csv("data/data_no_outliers.csv")
+
+print(df)
+print("\n================================+================================")
+print(df_no_outliers)
+```
+
+
+```{python}
+df_no_outliers[
+    df_no_outliers["sum_gamerounds"] == 0
+]
+```
+
+- There are 7988 instances of users playing no games at all. 
+
+# Analysis
+
+## Modeling Count
+- Poisson or negative binomial distribution
+
+```{python}
+control_s = df_no_outliers[df_no_outliers["version"] == 'gate_30']['sum_gamerounds']
+treatment_s = df_no_outliers[df_no_outliers["version"] == 'gate_40']['sum_gamerounds']
+
+mean_control = control_s.mean()
+variance_control = control_s.var()
+
+mean_treatment = treatment_s.mean()
+variance_treatment = treatment_s.var()
+
+print(f"Control group - mean: {mean_control:.2f}, variance: {variance_control:.2f}")
+print(f"Treament group - mean: {mean_treatment:.2f}, variance: {variance_treatment:.2f}")
+```
+
+Since our data has overdispersion (variance significantly greater than the mean), the negative binomial distribution is a more appropriate choice.
+
+## Model
+
+```{python}
+with pm.Model() as model:
+    # priors for the means of each group
+    mu_control = pm.Gamma('mu_control', alpha=2, beta=1)
+    mu_treatment = pm.Gamma('mu_treatment', alpha=2, beta=1)
+
+    # priors for the dispersion parameters
+    alpha_control = pm.HalfCauchy('alpha_control', beta=10)
+    alpha_treatment = pm.HalfCauchy('alpha_treatment', beta=10)
+
+    # likelihoods
+    observed_control = pm.NegativeBinomial(
+        'obs_control',
+        mu=mu_control,
+        alpha=alpha_control,
+        observed=control_s
+    )
+
+    observed_treatment = pm.NegativeBinomial(
+        'obs_treatment',
+        mu=mu_treatment,
+        alpha=alpha_treatment,
+        observed=treatment_s
+    )
+
+    diff_of_means = pm.Deterministic('diff_of_means', mu_treatment - mu_control)
+
+model.to_graphviz(save='images/rounds_model.png')
+```
+
+
+```{python}
+with model:
+    idata = pm.sample_prior_predictive(1000)
+
+```
+
+
+```{python}
+az.plot_ppc(idata, group='prior')
+```
+
+
+```{python}
+with model:
+    idata_posterior = pm.sample(5000)
+```
+
+
+```{python}
+fig, ax = plt.subplots(figsize=(8,5))
+fig.suptitle('No Difference in Rounds Played Between Gates', fontsize=15)
+az.plot_posterior(idata_posterior.posterior['diff_of_means'], rope=[-2, 2], ax=ax) 
+
+ax.set_title('Posterior Distribution of the Difference in Means', fontsize=10)
+plt.savefig('images/rounds_diff_means.png')
+```
+
+- The posterior plot shows that the difference in means is centered around -0.26 with a 94% CI from -0.82 to 0.25.
+- The treatment effect on game rounds playes is small. And since it includes 0, we cannot definitely say that the treatment has any tangible effect. 
+- And say we thought that 2 games plus or minus amounts to no effect, 100% of our posterior lies within this ROPE.
+
+
+```{python}
+with model:
+    idata_ppc = pm.sample_posteror_predictive(idata_posterior,)
+
+``` 
+
+```{python}
+az.plot_ppc(idata_ppc, group='posterior', num_pp_samples=100)
+```
