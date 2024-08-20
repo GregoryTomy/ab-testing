@@ -12,7 +12,7 @@ Recently, the game develowpment team at Cookie Cats has hypothesized that reloca
 The primary objective of this analysis is to determine whether moving the gate to level 40 has a positive impact on player behavior, specifically focusing on key metrics such as the number of game rounds played within the first 14 days (sum_gamerounds) and retention rates at one day (retention_1) and seven days (retention_7) after installation.
 
 # Results
-	Found a -1.3% average uplift in 1-day retention and -4.3% in 7-day retention. No increase in games played.
+Found a -1.3% average uplift in 1-day retention and -4.3% in 7-day retention. No increase in games played.
 
 
 ## Game rounds played
